@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-def test_victoire(grille_pos, joueur):
+def test_victoire(grille_pos):
     """
     Parcours la grille de position donnée en entrée et vérifie s'il y a encore des bateaux en jeu.
     S'il n'y a plus de bateau sur la grille, Alors le joueur à gagné
@@ -9,9 +9,8 @@ def test_victoire(grille_pos, joueur):
         for i in range (len(grille_pos)):
             if grille_pos[k][i] != 0:
                 presence_bateau = True
-    if not presence_bateau:
-        print(f"Le joueur {joueur} remporte la partie")
-	
+    return presence_bateau
+
 def vie_bateau(grille_pos, tir_y, tir_x):
     """
     Compte le nombre de cellules contenant un morceau du bateau visé avec les coordonnées.
@@ -37,7 +36,7 @@ def nombre_joueurs():
     """
     nb_joueur = input("Nombre de joueur(s) : ")
     while ord(nb_joueur)<49 or ord(nb_joueur)>50: 
-        print(f"Vous ne pouvez jouer qu'à 1 ou 2 joueurs et n'oubliez pas de rentrer un nombre !")
+        print("Vous ne pouvez jouer qu'à 1 ou 2 joueurs et n'oubliez pas de rentrer un nombre !")
         nb_joueur = input("Nombre de joueur(s) : ")
     return int(nb_joueur)
 
@@ -235,13 +234,7 @@ def bateau_touche(coord, grille_pos, grille_jeu,nv_vie,somme,joueur):
     if grille_pos[coord[0]][coord[1]]:  #Bateau touché
         grille_jeu[coord[0]][coord[1]] = "X"
         afficher_grille(grille_jeu)
-        nv_vie -= 1
-        somme -= 1
-        if nv_vie == 0:
-            print("Touché, coulé !")
-        else:
-            print("Touché !")
-        print(f"{joueur} joue à nouveau")
+        vie_bateau(grille_pos, coord[0], coord[1])
     else:   #Tir dans l'eau
          grille_jeu[coord[0]][coord[1]] = "O"
          afficher_grille(grille_jeu)
@@ -268,6 +261,7 @@ sommes = [somme_1, somme_2]
 grille_jeu_1 = grille_jeu()
 grille_jeu_2 = grille_jeu()
 grilles_jeux = [grille_jeu_1, grille_jeu_2]
+presence_bateau = True
 
 #PROGRAMME :
 
@@ -283,18 +277,21 @@ if nombre_joueurs == 2:#Placement des bateaux ( optimisé)
         for j in range(len(bateaux[i])):
             placement_bateaux(bateaux[i][j], j+1, grilles_pos[i])
         affichage_bateaux(grilles_pos[i])
-    while somme_1 != 0 or somme_2 != 0:
+    while presence_bateau:
         if tour %2 == 0:
             print("C'est au tour de joueur 1\n")
         else:
             print("C'est au tour de joueur 2\n")
-        aff_grille_jeu_1 = afficher_grille(grille_jeu_1)
+        aff_grille_jeu_1 = afficher_grille(grilles_jeux[tour%2])
         coordonnees_tir = input("Rentrez vos coordonnées de tir:  ")
         while not verif_coord(coordonnees_tir,grille_jeu_1):
             coordonnees_tir = input("Rentrez vos coordonnées de tir:  ")
         print("C'est bon les coordonnées sont valide on va pouvoir tirer.")
         trad_coord = trad_coordonnees(coordonnees_tir)
-        bateau_touche(trad_coord,grille_position[tour%2],grilles_jeu[tour%2],5,sommes[tour%2],f"joueur {tour%2 +1}")
+        bateau_touche(trad_coord,grilles_pos[tour%2],grilles_jeux[tour%2],5,sommes[tour%2],f"joueur {tour%2 +1}")
         somme_1 = sum(bateaux_1)
         somme_2 = sum(bateaux_2)
-        tour += 1
+        presence_bateau = test_victoire(grilles_pos[tour%2])
+        if presence_bateau:
+            tour += 1
+    print("FIN DE PARTIE")

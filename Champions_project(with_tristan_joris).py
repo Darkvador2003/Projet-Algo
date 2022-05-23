@@ -335,7 +335,7 @@ if nombre_joueurs == 2:#Placement des bateaux ( optimisé)
             placement_bateaux(bateaux[i][j], j+1, grilles_pos[i])
         affichage_bateaux(grilles_pos[i])
         input("Voici vos bateaux, tapez 'entrée' pour valider:  ")#Permet de "cacher" la grille
-        print("\n"*10)                            #des bateaux avant que le 2e joueur joue
+        print("\n"*50)                            #des bateaux avant que le 2e joueur joue
     while test_victoire(grilles_pos[0]) and test_victoire(grilles_pos[1]): #On regarde dans les 2 grilles s'il reste encore des bateux à chasser.
         if tour %2 == 0:
             print("C'est au tour de joueur 1\n")

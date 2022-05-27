@@ -1,36 +1,4 @@
-# -*- coding: utf-8 -*-
 import random
-from tkinter import messagebox
-
-def placement_bat_auto(n,num_bat,grille_pos):
-        """
-        L'ordinateur place aléatoirement des bateaux dans la grille
-        num_bat est une variable qui continent le numéro du bateau que l'on doit placer.
-        """
-        a = random.randint(1,10-n)
-        b = random.randint(ord('A'),ord('J')-n)
-        b = b - 64
-        c1 = [a,b] #Coordonnée du bateau en indices uniquement à titre indicatif
-        vertical = random.choice("hv")
-        if vertical == "v":
-            vertical = True
-        else:
-            vertical = False
-
-        if vertical:
-            c2  = [a+n, b] #Coordonées du bateau en chiffres uniquement à titre indicatif
-            if verif_placmnt_bateaux([a, b], [a+n, b], n, grille_pos, True):
-                for i in range(a,a+n):
-                    grille_pos[i][b] = num_bat
-            else:
-                placement_bat_auto(n, num_bat, grille_pos)
-        else:
-            c2 = [a, b+n]#Coordonées du bateau en indice uniquement à titre indicatif
-            if verif_placmnt_bateaux([a,b], [a, b+n] , n, grille_pos, True):
-                for i in range(b,b+n):
-                    grille_pos[a][i] = num_bat
-            else:
-                placement_bat_auto(n, num_bat, grille_pos)
                 
 def nombre_joueurs():
     """
@@ -89,7 +57,7 @@ def verif_placmnt_bateaux(c1, c2, n, grille_pos, auto=False):
     grille_pos est la grille des positions pour vérifier la validité des coordonnées.
     auto est un booléen qui vaut vrai si on utilise la fonction dans le cas où on place les bateaux automatiquement.
     """
-    if c2[0] > 10 or c2[1] > 10 :
+    if c2[0] > 11 or c2[1] > 11 :
         if not auto:
             print("Vous essayez de placer un bateau trop près du bord.")
         res = False # Il n'y a pas la place pour faire rentrer un bateau 
@@ -159,6 +127,36 @@ def placement_bateaux(n,num_bat,grille_pos):
             else:
                 placement_bateaux(n, num_bat, grille_pos)
 
+def placement_bat_auto(n,num_bat,grille_pos):
+        """
+        L'ordinateur place aléatoirement des bateaux dans la grille
+        num_bat est une variable qui continent le numéro du bateau que l'on doit placer.
+        """
+        a = random.randint(1,10-n)
+        b = random.randint(ord('A'),ord('J')-n)
+        b = b - 64
+        c1 = [a,b] #Coordonnée du bateau en indices uniquement à titre indicatif
+        vertical = random.choice("hv")
+        if vertical == "v":
+            vertical = True
+        else:
+            vertical = False
+
+        if vertical:
+            c2  = [a+n, b] #Coordonées du bateau en chiffres uniquement à titre indicatif
+            if verif_placmnt_bateaux([a, b], [a+n, b], n, grille_pos, True):
+                for i in range(a,a+n):
+                    grille_pos[i][b] = num_bat
+            else:
+                placement_bat_auto(n, num_bat, grille_pos)
+        else:
+            c2 = [a, b+n]#Coordonées du bateau en indice uniquement à titre indicatif
+            if verif_placmnt_bateaux([a,b], [a, b+n] , n, grille_pos, True):
+                for i in range(b,b+n):
+                    grille_pos[a][i] = num_bat
+            else:
+                placement_bat_auto(n, num_bat, grille_pos)
+
 def grille_pos(n,e):
     """
     génère une grille de n lignes et n colonnes
@@ -182,7 +180,13 @@ def grille_jeu():
         l1.append([f"{y}  ",".",".",".",".",".",".",".",".",".","."])
     return(l1)
 
-#grille_jeu = grille_jeu()
+def affichage_bateaux(grille_pos):
+    grille_aff = grille_jeu()
+    for i in range(len(grille_pos)):
+        for j in range(len(grille_pos[i])):
+            if grille_pos[i][j] :
+                grille_aff[i][j] = 'B'
+    afficher_grille(grille_aff)
 
 def afficher_grille(grille):
     """
@@ -287,19 +291,7 @@ def bateau_touche(coord, grille_pos, grille_jeu,joueur):
          afficher_grille(grille_jeu)
          print("Plouf, c'est raté")
          res = False
-    return res
-         
-def affichage_bateaux(grille_pos):
-    grille_aff = grille_jeu()
-    for i in range(len(grille_pos)):
-        for j in range(len(grille_pos[i])):
-            if grille_pos[i][j] :
-                grille_aff[i][j] = 'B'
-    afficher_grille(grille_aff)
-         
-
-
-
+    return res  
 
 #Boucle Principale :
 
@@ -318,7 +310,7 @@ if nombre_joueurs == 2:#Placement des bateaux ( optimisé)
     
     Que le meilleur gagne !
     """
-    messagebox.showinfo("- Vous avez sélectionné le mode 2 joueurs -", regles)
+    print("- Vous avez sélectionné le mode 2 joueurs -", regles)
     #Définition des variables :
     bateaux_1, bateaux_2 = init_bateau(2)
     bateaux = [bateaux_1, bateaux_2]
@@ -359,10 +351,10 @@ if nombre_joueurs == 2:#Placement des bateaux ( optimisé)
     print("FIN DE PARTIE")
     if test_victoire(grilles_pos[0]):
         print("Le joueur 1 remporte la partie")
-        messagebox.showinfo("Victoire !", "Le joueur 1 remporte la partie")
+        print("Victoire !", "Le joueur 1 remporte la partie")
     else:
         print("Le joueur 2 remporte la partie")
-        messagebox.showinfo("Victoire !", "Le joueur 2 remporte la partie")
+        print("Victoire !", "Le joueur 2 remporte la partie")
 else:
     regles = """
     Le but du jeu est de couler la totalité des bâteaux placés par l'ordinateur avec un nombre de tour minimal.
@@ -376,7 +368,7 @@ else:
     
     Saurez-vous battre le record ?
     """
-    messagebox.showinfo("- Vous avez sélectionné le mode contre l'ordinateur -", regles )
+    print("- Vous avez sélectionné le mode contre l'ordinateur -", regles )
     bateaux_1 = init_bateau(1) # On est forcément dans le cas avec un seul joueur
     tour = 0 #variable que l'on incremente à chaque fois qu'on change de joueur actif
     grille_jeu_1 = grille_jeu()
@@ -399,5 +391,6 @@ else:
             print("C'est bon les coordonnées sont valide on va pouvoir tirer.")
             trad_coord = trad_coordonnees(coordonnees_tir)
         tour += 1
-    messagebox.showinfo("Victoire",  f"Vous avez gagné en {tour} tour(s)")
+    print("Victoire",  f"Vous avez gagné en {tour} tour(s)")
     print("FIN DE PARTIE")
+
